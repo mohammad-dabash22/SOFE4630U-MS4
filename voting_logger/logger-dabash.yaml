@@ -1,0 +1,62 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logger-deployment-dabash
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: logger-dabash
+  template:
+    metadata:
+      labels:
+        app: logger-dabash
+    spec:
+      containers:
+        - image: northamerica-northeast2-docker.pkg.dev/dev-methods-tools/sofe4630u-dabash/logger-dabash:latest
+          name: logger
+          env:
+            - name: REDIS_HOST
+              value: redis-dabash
+            - name: GCP_PROJECT
+              value: dev-methods-tools
+            - name: ELECTION_SUB_ID
+              value: election-submit-sub-dabash
+            - name: TOPIC_NAME
+              value: election-dabash
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-dabash
+spec:
+  ports:
+    - port: 6379
+  selector:
+    app: redis-dabash
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment-dabash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-dabash
+  template:
+    metadata:
+      labels:
+        app: redis-dabash
+    spec:
+      containers:
+        - image: bitnami/redis:latest
+          name: redis
+          env:
+            - name: REDIS_PASSWORD
+              value: election
+          ports:
+            - containerPort: 6379
+              name: redis
+--- 

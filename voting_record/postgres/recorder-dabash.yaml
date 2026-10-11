@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recorder-deployment-dabash
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: recorder-dabash
+  template:
+    metadata:
+      labels:
+        app: recorder-dabash
+    spec:
+      containers:
+        - image: northamerica-northeast2-docker.pkg.dev/dev-methods-tools/sofe4630u-dabash/recorder-dabash:latest
+          name: recorder
+          env:
+            - name: POSTGRES_HOST
+              value: postgres-dabash
+            - name: GCP_PROJECT
+              value: dev-methods-tools
+            - name: ELECTION_SUB_ID
+              value: election-record-sub-dabash
+            - name: TOPIC_NAME
+              value: election-dabash
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-dabash
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres-dabash
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment-dabash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-dabash
+  template:
+    metadata:
+      labels:
+        app: postgres-dabash
+    spec:
+      containers:
+        - image: northamerica-northeast2-docker.pkg.dev/dev-methods-tools/sofe4630u-dabash/postgres-dabash:election
+          name: postgres
+          env:
+            - name: POSTGRES_DB
+              value: election
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: adminpassword
+          ports:
+            - containerPort: 5432
+              name: postgres
+---

@@ -14,8 +14,8 @@ if len(files)>0:
    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]=files[0];
 
 #To do: Set the project ID, topic name and the subscription_id 
-project_id = ""
-topic_name = "election"
+project_id = "dev-methods-tools"
+topic_name = "election-dabash"
 
 # let the user enter the election and machine IDs
 electionID = int(input("Please enter the election ID (integer): "))
